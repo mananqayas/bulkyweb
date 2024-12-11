@@ -16,4 +16,10 @@ public class CategoryController(ApplicationDbContext db) : Controller
         List<Category> objCategoryList = db.Categories.ToList();
         return View(objCategoryList);
     }
+
+    public IActionResult Create()
+    {
+
+        return View();
+    }
 }

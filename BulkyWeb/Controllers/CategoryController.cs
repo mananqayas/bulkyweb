@@ -32,15 +32,85 @@ public class CategoryController(ApplicationDbContext db) : Controller
             ModelState.AddModelError("name", "Display order cannot match the name");
         }
 
-        if (ModelState.IsValid)
+        if (obj.Name.ToLower() == "test")
         {
             
-            db.Categories.Add(obj);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            ModelState.AddModelError("", "Test is in invalid value");
         }
 
-        return View();
+        if (!ModelState.IsValid) return View();
+        db.Categories.Add(obj);
+        db.SaveChanges();
+        TempData["Success"] = "Category created successfully";
+        return RedirectToAction("Index");
+
+
+
+    }
+    
+    
+    
+    public IActionResult Edit(int? id)
+    {
+
+        if (id is null or 0)
+        {
+
+            return NotFound();
+        }
+        
+        var categoryFromDb = db.Categories.Find(id);
+      
+
+        if (categoryFromDb == null)
+        {
+            return NotFound();
+        }
+
+        return View(categoryFromDb);
+    }
+    [HttpPost]
+    public IActionResult Edit(Category obj)
+    {
+        if (!ModelState.IsValid) return View();
+        db.Categories.Update(obj);
+        db.SaveChanges();
+        TempData["Success"] = "Category updated successfully";
+        return RedirectToAction("Index");
+
+
+
+    }
+    
+    public IActionResult Delete(int? id)
+    {
+
+        if (id is null or 0)
+        {
+
+            return NotFound();
+        }
+        
+        var categoryFromDb = db.Categories.Find(id);
+      
+
+        if (categoryFromDb == null)
+        {
+            return NotFound();
+        }
+
+        return View(categoryFromDb);
+    }
+    [HttpPost, ActionName("Delete")]
+    public IActionResult DeletePost(int? id)
+    {
+        var obj = db.Categories.Find(id);
+        
+        if(obj == null) {return NotFound();}
+        db.Categories.Remove(obj);
+        db.SaveChanges();
+        TempData["Success"] = "Category deleted successfully";
+        return RedirectToAction("Index");
 
 
 
